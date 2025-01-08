@@ -150,9 +150,19 @@ def file_size_string(num_bytes: int) -> str:
     Returns:
         None
     """
+
     sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
     # Run "pytest find_duplicates.py -k file_size_string" to test your implementation
-    raise NotImplementedError()
+    if num_bytes < 0:
+        raise ValueError("num_bytes must be non-negative")
+
+    index = 0
+    new_num_bytes = num_bytes
+    while new_num_bytes >= 1000 and index < len(sizes) - 1:
+        new_num_bytes /= 1000
+        index += 1
+
+    return f"{new_num_bytes:.2f}{sizes[index]}"
 
 
 def print_duplicates(duplicates: list[list[str]]):
@@ -312,7 +322,8 @@ def test_filter_files_by_first_1k_bytes():
         file4 = create_file(temp_dir, "file4.txt", "A" * 1024 + "B" * 24)
         file5 = create_file(temp_dir, "file5.txt", "A" * 1024 + "C" * 24)
 
-        duplicates = filter_files_by_first_1k_bytes([file1, file2, file3, file4, file5])
+        duplicates = filter_files_by_first_1k_bytes(
+            [file1, file2, file3, file4, file5])
         assert set(duplicates) == {file1, file2, file4, file5}
 
 
