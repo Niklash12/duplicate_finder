@@ -52,9 +52,17 @@ def hash_first_1k_bytes(file_path: str) -> str:
     Returns:
         str: The hexadecimal SHA-1 hash of the first 1024 bytes of the file.
     """
-    # Run "pytest find_duplicates.py -k hash_first_1k_bytes" to test your implementation
-    raise NotImplementedError()
+    sha1 = hashlib.sha1()
+    try:
+        with open(file_path, 'rb') as file:
+            first_1k_bytes = file.read(1024)
+            sha1.update(first_1k_bytes)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"The file at {file_path} was not found.")
+    except IOError as e:
+        raise IOError(f"An error occurred while reading the file: {e}")
 
+    return sha1.hexdigest()
 
 def hash_file(file_path: str) -> str:
     """
