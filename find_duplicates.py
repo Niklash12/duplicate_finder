@@ -58,8 +58,16 @@ def hash_file(file_path: str) -> str:
     Returns:
         str: The hexadecimal SHA-1 hash of the file.
     """
-    # Run "pytest find_duplicates.py -k hash_file" to test your implementation
-    raise NotImplementedError()
+    sha1 = hashlib.sha1()
+    try:
+        with open(file_path, 'rb') as file:
+            while chunk := file.read(8192):
+                sha1.update(chunk)
+        return sha1.hexdigest()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"The file at {file_path} was not found.")
+    except Exception as e:
+        raise RuntimeError(f"An error occurred while hashing the file: {e}")
 
 
 def filter_files_by_size(file_paths: list[str]) -> list[str]:
@@ -312,7 +320,8 @@ def test_filter_files_by_first_1k_bytes():
         file4 = create_file(temp_dir, "file4.txt", "A" * 1024 + "B" * 24)
         file5 = create_file(temp_dir, "file5.txt", "A" * 1024 + "C" * 24)
 
-        duplicates = filter_files_by_first_1k_bytes([file1, file2, file3, file4, file5])
+        duplicates = filter_files_by_first_1k_bytes(
+            [file1, file2, file3, file4, file5])
         assert set(duplicates) == {file1, file2, file4, file5}
 
 
