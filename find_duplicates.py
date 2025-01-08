@@ -174,9 +174,19 @@ def file_size_string(num_bytes: int) -> str:
     Returns:
         None
     """
+
     sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
     # Run "pytest find_duplicates.py -k file_size_string" to test your implementation
-    raise NotImplementedError()
+    if num_bytes < 0:
+        raise ValueError("num_bytes must be non-negative")
+
+    index = 0
+    new_num_bytes = num_bytes
+    while new_num_bytes >= 1000 and index < len(sizes) - 1:
+        new_num_bytes /= 1000
+        index += 1
+
+    return f"{new_num_bytes:.2f}{sizes[index]}"
 
 
 def print_duplicates(duplicates: list[list[str]]):
